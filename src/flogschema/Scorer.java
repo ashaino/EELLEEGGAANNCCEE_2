@@ -427,5 +427,10 @@ public class Scorer extends WordBank {
 
 	}
 
+	
+	public void checkForHighScores(){
+		
+		
+	}
 
 }
