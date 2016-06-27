@@ -5,7 +5,7 @@ public class WordBoard extends WordBank{
 
 	private int wordLength;
 	private final int POWER_COUNT = 2;
-	private final static int AUTO_SEARCH = 3;
+	private static int autoSearchCount = 1;
 	private int[] placedPowers;
 	private char[] wordBoard;
 	private final static int ST_TIME_GIVEN_IN_SECONDS = 180; 
@@ -36,7 +36,7 @@ public class WordBoard extends WordBank{
 	}
 	
 	public static int getAutoSearch() {
-		return AUTO_SEARCH;
+		return autoSearchCount;
 	}
 
 

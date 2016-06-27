@@ -1,5 +1,11 @@
 package ui;
 
-public class Notifications extends UI {
 
+public class Notifications extends UI{
+
+	public Notifications(){
+		
+		
+	}
+	
 }

@@ -1,7 +1,7 @@
 package ui;
 
-public class UI {
+public abstract class UI {
 
-	
-	
+
+
 }
