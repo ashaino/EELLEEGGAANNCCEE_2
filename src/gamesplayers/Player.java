@@ -7,8 +7,8 @@ import dataaccess.Database;
 
 public class Player extends Game {
 
-	private int playerID;
-	private String playerUserName;
+	protected int playerID;
+	protected String playerUserName;
 	private String playerPassword;
 	private String playerEmail;
 	private int playerRoundScore;
@@ -215,6 +215,30 @@ public class Player extends Game {
 
 	public void setPlayerTotalScore(int playerTotalScore) {
 		this.playerTotalScore = playerTotalScore;
+	}
+
+
+	public void playerRequestToSave(){
+
+		// TODO: requesting to quit
+
+		playerSendSaveRequests();
+	}
+
+	public void playerSendSaveRequests(){
+
+		// TODO: sending save request to other members
+	}
+
+	public void playerRespondSaveRequest(){
+
+		// TODO:
+
+	}
+
+	public void seeHighScores(){
+
+
 	}
 
 

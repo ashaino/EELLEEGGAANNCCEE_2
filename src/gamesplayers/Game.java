@@ -78,13 +78,35 @@ public class Game {
 
 	public void joinGame(){
 
+		// TODO: join game
 
+	}
+
+	public boolean isAlreadyInGameGroup(){
+
+		// TODO: check already a member of that game
+
+		return true;
 	}
 
 	public void resumeGame(){
 
+		// TODO: resume game
 
 	}
 
+	public boolean checkForSaveResponses(){
+
+		// TODO: check save responses
+
+
+		return true;
+	}
+
+	public void saveGame(){
+
+		// TODO: save game
+
+	}
 
 }
