@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE hibernate-mapping PUBLIC 
+<!DOCTYPE hibernate-mapping PUBLIC
  "-//Hibernate/Hibernate Mapping DTD//EN"
- "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+ "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
    <class name="gamesplayers.Player" table="tbl_GamePlayer">
       <meta attribute="class-description">
-         This class contains the games and player details. 
+         This class contains the games and player details.
       </meta>
-      
+
       <id name="gamePlayerID" type="int" column="gameplayer_id">
          <generator class="increment" />
       </id>
-      
+
       <many-to-one name="Game" class="gamesplayers.Game"
             column="game_id" unique="true" not-null="true"
             cascade="all" />
-            
+
        <many-to-one name="Player" class="gamesplayers.Player"
             column="player_id" unique="true" not-null="true"
             cascade="all" />
-            
+
       <property name="playerScore" column="player_score" length ="100" type="int"/>
-      
-      
+
+
    </class>
 </hibernate-mapping>

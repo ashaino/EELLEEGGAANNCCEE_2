@@ -6,7 +6,7 @@ public class Game {
 
 	protected static int gameID;
 	protected static String gameName;
-	protected static String levelInfo;
+	protected static int gameStatus;
 	protected static int playerCount;
 	protected static Player[] players;
 	protected static int gameRoundNo;
@@ -17,21 +17,19 @@ public class Game {
 
 	}
 
-	public Game(String gameName, int playerCount, String levelInfo){
+
+	public Game(String gameName, int playerCount, int gameStatus) {
 
 		Game.gameName = gameName;
 		Game.playerCount = playerCount;
-		Game.levelInfo = levelInfo;
-
+		Game.gameStatus = gameStatus;
 	}
 
-	public String getLevelInfo() {
-		return levelInfo;
+	public int getGameStatus() {
+		return gameStatus;
 	}
 
-	public void setLevelInfo(String levelInfo) {
-		Game.levelInfo = levelInfo;
-	}
+
 
 	public int getPlayerCount() {
 		return playerCount;
@@ -66,15 +64,22 @@ public class Game {
 		Game.gameID = gameID;
 	}
 
-	public void createNewGame(String gameName, int playerCount, String levelInfo, Player[] players){
+	public void createNewGame(String gameName, int playerCount, int gameStatus, Player[] players){
 
 		setGameName(gameName);
 		setPlayerCount(playerCount);
-		setLevelInfo(levelInfo);
-		database.createGame(gameName, playerCount, levelInfo, players);
+		setGameStatus(gameStatus);
+		database.createGame(gameName, playerCount, gameStatus, players);
 
 
 	}
+
+	private void setGameStatus(int gameStatus) {
+
+		Game.gameStatus = gameStatus;
+
+	}
+
 
 	public void joinGame(){
 

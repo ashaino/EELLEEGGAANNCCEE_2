@@ -5,7 +5,7 @@ public class TrophyCabinet extends Player{
 
 	private String trophyID;
 	private String trophyName;
-	private boolean isTrophyUnlocked;
+	private int trophyUnlocked;
 	private boolean trophyDescription;
 
 
@@ -30,12 +30,12 @@ public class TrophyCabinet extends Player{
 		this.trophyName = trophyName;
 	}
 
-	public boolean isTrophyUnlocked() {
-		return isTrophyUnlocked;
+	public int isTrophyUnlocked() {
+		return trophyUnlocked;
 	}
 
-	public void setTrophyUnlocked(boolean isTrophyUnlocked) {
-		this.isTrophyUnlocked = isTrophyUnlocked;
+	public void setTrophyUnlocked(int isTrophyUnlocked) {
+		this.trophyUnlocked = isTrophyUnlocked;
 	}
 
 	public String getTrophyID() {

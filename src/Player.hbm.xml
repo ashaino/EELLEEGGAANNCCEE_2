@@ -11,6 +11,9 @@
       <id name="playerID" type="int" column="player_id">
          <generator class="increment"/>
       </id>
-      <property name="playerName" column="player_name" length="100" type="string"/>
+      <property name="playerUserName" column="player_username" type="string" length="100"/>
+      <property name="playerEmail" column="player_email" type="string" length="200"/>
+      <property name="playerPassword" column="player_password" type="string" length="100"/>
+
    </class>
 </hibernate-mapping>

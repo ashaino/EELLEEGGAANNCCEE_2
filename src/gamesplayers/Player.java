@@ -13,11 +13,41 @@ public class Player extends Game {
 	private String playerEmail;
 	private int playerRoundScore;
 	private int playerTotalScore;
-	private int playerActive;
-	private boolean isPlaying;
+	private int playerStatus;
+	private int highScore;
 
 	private static List<Player> onlinePlayersNotPlaying
 						= new ArrayList<Player>();
+
+	public String getPlayerUserName() {
+		return playerUserName;
+	}
+
+
+	public void setPlayerUserName(String playerUserName) {
+		this.playerUserName = playerUserName;
+	}
+
+
+	public int getPlayerRoundScore() {
+		return playerRoundScore;
+	}
+
+
+	public void setPlayerRoundScore(int playerRoundScore) {
+		this.playerRoundScore = playerRoundScore;
+	}
+
+
+	public static List<Player> getOnlinePlayersNotPlaying() {
+		return onlinePlayersNotPlaying;
+	}
+
+
+	public static void setOnlinePlayersNotPlaying(List<Player> onlinePlayersNotPlaying) {
+		Player.onlinePlayersNotPlaying = onlinePlayersNotPlaying;
+	}
+
 
 	/* represents players who are online
 	 * and currently playing a game
@@ -31,23 +61,21 @@ public class Player extends Game {
 	}
 
 
-	public Player(String playerName, int isActive){
+	public Player(String playerName, int playerStatus){
 
-		super(Game.gameName, Game.playerCount,
-				Game.levelInfo);
+		super();
 		this.playerUserName = playerName;
-		this.playerActive = isActive;
+		this.playerStatus = playerStatus;
 	}
 
-	public Player(int gameID, int playerID, int playerScore, int isActive){
+	public Player(int gameID, int playerID, int playerScore, int playerStatus){
 
-		super(Game.gameName, Game.playerCount,
-				Game.levelInfo);
+		super();
 
 		Game.gameID = gameID;
 		this.playerID = playerID;
 		this.playerRoundScore = playerScore;
-		this.playerActive = isActive;
+		this.playerStatus = playerStatus;
 	}
 
 
@@ -63,6 +91,21 @@ public class Player extends Game {
 		this.playerRoundScore = playerScore;
 	}
 
+
+
+	public Player(int playerID, int highScore) {
+		this.playerID = playerID;
+		this.setHighScore(highScore);
+	}
+
+
+	public Player(String playerName, String playerEmail, String playerPassword) {
+
+		this.playerUserName = playerName;
+		this.playerEmail = playerEmail;
+		this.playerPassword = playerPassword;
+
+	}
 
 
 	public String getPlayerName() {
@@ -128,33 +171,6 @@ public class Player extends Game {
 		this.playerRoundScore = playerScore;
 	}
 
-	public int getIsActive() {
-		return playerActive;
-	}
-
-	public void setActive(int isActive) {
-		this.playerActive = isActive;
-	}
-
-	public int getPlayerActive() {
-		return playerActive;
-	}
-
-	public void setPlayerActive(int playerActive) {
-		this.playerActive = playerActive;
-	}
-
-
-	public boolean isPlayerPlay() {
-		return isPlaying;
-	}
-
-
-	public void setPlayerPlay(boolean playerPlay) {
-		this.isPlaying = playerPlay;
-	}
-
-
 
 	// update players who are playing
 
@@ -164,7 +180,7 @@ public class Player extends Game {
 
 			if(player.playerID == playerID){
 
-				player.isPlaying = true;
+				player.playerStatus = 1;
 				onlinePlayersNotPlaying.remove(player);
 				onlinePlayersPlaying.add(player);
 				break;
@@ -174,7 +190,12 @@ public class Player extends Game {
 	}
 
 
-	// update players who are not playing
+	/* update players who are not playing
+	 * 0 disconnected
+	 * 1 connected & free
+	 * 2 engaged
+	*/
+
 
 	public List<Player> updatePlayerNotPlaying(int playerID){
 
@@ -182,7 +203,7 @@ public class Player extends Game {
 
 			if(player.playerID == playerID){
 
-				player.isPlaying = false;
+				player.playerStatus = 0;
 				onlinePlayersPlaying.remove(player);
 				onlinePlayersNotPlaying.add(player);
 				break;
@@ -194,15 +215,10 @@ public class Player extends Game {
 
 	public boolean playerLogin(String userName, String password){
 
-		boolean isValidCombination = false;
-		Player player = new Player();
-
 		database = new Database();
-		player = database.loadPlayerData();
-		isValidCombination = (player.playerEmail ==
-				userName && player.playerPassword == password)?true:false;
 
-		return isValidCombination;
+		return database.loadPlayerData(userName, password);
+
 	}
 
 
@@ -239,6 +255,26 @@ public class Player extends Game {
 	public void seeHighScores(){
 
 
+	}
+
+
+	public int getPlayerStatus() {
+		return playerStatus;
+	}
+
+
+	public void setPlayerStatus(int playerStatus) {
+		this.playerStatus = playerStatus;
+	}
+
+
+	public int getHighScore() {
+		return highScore;
+	}
+
+
+	public void setHighScore(int highScore) {
+		this.highScore = highScore;
 	}
 
 

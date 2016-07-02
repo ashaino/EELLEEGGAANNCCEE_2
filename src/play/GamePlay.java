@@ -43,8 +43,10 @@ public class GamePlay {
 
 
 		Database db = new Database();
-		//System.out.println(db.savePlayer("Jackson",1));
-		db.loadPlayerData();
+
+		System.out.println(db.createPlayer("Kaushalya","kaushalya815@gmail.com","password"));
+
+		System.out.println(db.loadFreePlayers());
 
 
 

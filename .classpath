@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="Lib/Other/commons-logging-1.2.jar"/>
 	<classpathentry kind="lib" path="Lib/Other/restfb-1.25.0.jar"/>
 	<classpathentry kind="lib" path="Lib/Other/mysql-connector-java-5.1.39-bin.jar"/>
+	<classpathentry kind="lib" path="Lib/Other/commons-codec-1.10.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

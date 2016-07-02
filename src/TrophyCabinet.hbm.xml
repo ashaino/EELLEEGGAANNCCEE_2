@@ -13,6 +13,6 @@
       </id>
       <property name="trophyName" column="trophy_name" type="string" length="100"/>
       <property name="trophyDescription" column="trophy_desc" type="string"/>
-      <property name="isTrophyUnlock" column="player_unlock" type="int" length="1"/>
+      <property name="trophyUnlocked" column="trophy_unlock" type="int" length="1"/>
    </class>
 </hibernate-mapping>
