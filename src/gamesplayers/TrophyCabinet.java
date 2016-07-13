@@ -1,19 +1,18 @@
 package gamesplayers;
 
-
 public class TrophyCabinet extends Player{
 
 	private String trophyID;
 	private String trophyName;
-	private int trophyUnlocked;
-	private boolean trophyDescription;
+	private boolean trophyUnlocked;
+	private String trophyDescription;
 
 
-	public boolean isTrophyDescription() {
+	public String isTrophyDescription() {
 		return trophyDescription;
 	}
 
-	public void setTrophyDescription(boolean trophyDescription) {
+	public void setTrophyDescription(String trophyDescription) {
 		this.trophyDescription = trophyDescription;
 	}
 
@@ -30,11 +29,11 @@ public class TrophyCabinet extends Player{
 		this.trophyName = trophyName;
 	}
 
-	public int isTrophyUnlocked() {
+	public boolean isTrophyUnlocked() {
 		return trophyUnlocked;
 	}
 
-	public void setTrophyUnlocked(int isTrophyUnlocked) {
+	public void setTrophyUnlocked(boolean isTrophyUnlocked) {
 		this.trophyUnlocked = isTrophyUnlocked;
 	}
 

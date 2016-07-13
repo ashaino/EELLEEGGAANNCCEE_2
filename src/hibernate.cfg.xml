@@ -18,13 +18,12 @@
 			root
 		</property>
 		<property name="hibernate.connection.password"></property>
-		<property name="hibernate.hbm2ddl.auto">update</property>
 
-		<!-- List of XML mapping files -->
-		<mapping resource="Game.hbm.xml" />
-		<mapping resource="Player.hbm.xml" />
-		<mapping resource="GamePlayer.hbm.xml" />
-		<mapping resource="HighScore.hbm.xml" />
-		<mapping resource="TrophyCabinet.hbm.xml" />
+
+		<mapping resource="Game.hbm.xml"/>
+		<mapping resource="Player.hbm.xml"/>
+		<mapping resource="HighScores.hbm.xml"/>
+		<mapping resource="GamePlayer.hbm.xml"/>
+
 	</session-factory>
 </hibernate-configuration>

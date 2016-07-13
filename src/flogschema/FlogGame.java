@@ -12,15 +12,14 @@ public abstract class FlogGame {
 
 		return randomNum;
 	}
-	
 
 	// binary search
-	
+
 	public static int getLetterValue(int[] array, char key) {
 
 		int low = 0;
 		int high = array.length - 1;
-	
+
 		while (low <= high) {
 
 			int mid = low + (high - low) / 2;
@@ -36,3 +35,4 @@ public abstract class FlogGame {
 		return -1;
 	}
 }
+

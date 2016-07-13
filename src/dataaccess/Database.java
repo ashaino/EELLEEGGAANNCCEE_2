@@ -1,21 +1,22 @@
 package dataaccess;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import gamesplayers.Game;
+import gamesplayers.GamePlayer;
+import gamesplayers.HighScores;
 import gamesplayers.Player;
 
 
@@ -24,7 +25,7 @@ public class Database {
 	private static SessionFactory factory;
 	private static Session session;
 	private static List results;
-	private static String hql;
+	private static String sql;
 
 	public Database(){
 
@@ -38,22 +39,18 @@ public class Database {
 	}
 
 
-	public Integer createPlayer(String playerName, String playerEmail,
-								String playerPassword){
+	public Integer createPlayer(Player player){
 
 		 session = factory.openSession();
 	      Transaction transaction = null;
 	      Integer playerID = null;
-	      String passwordHash = "";
+
 	      try{
 
-
-			passwordHash = PasswordHash.getSaltedHash(playerPassword);
-
-	    	  transaction = session.beginTransaction();
-	         Player player = new Player(playerName, playerEmail, passwordHash);
-	         playerID = (Integer) session.save(player);
-	         transaction.commit();
+			player.setPlayerPassword(PasswordHash.getSaltedHash(player.getPlayerPassword()));
+	    	transaction = session.beginTransaction();
+	        playerID = (Integer) session.save(player);
+	        transaction.commit();
 
 	      }catch (HibernateException e) {
 	         if (transaction!=null) transaction.rollback();
@@ -67,33 +64,66 @@ public class Database {
 	}
 
 
-	public boolean isEmailAreadyExists(){
+	// checking whether provided email already exists
+
+	public boolean isEmailAreadyExists(String inputEmail){
 
 
+		boolean isAlreadyExists = false;
+		Session session = factory.openSession();
+	    Transaction transaction = null;
+	    results = new ArrayList<Player>();
 
-		return true;
+	    try{
+
+	         transaction = session.beginTransaction();
+	         results = session.createSQLQuery("SELECT player_id from tbl_Player "
+	         									+ "where player_email = :email")
+	        		 		  .setString("email", inputEmail).list();
+	         System.out.println(results);
+
+
+	         transaction.commit();
+	    }
+	    catch (HibernateException exception) {
+
+	    	  if (transaction!=null) {
+	    		  transaction.rollback();
+	    	  }
+	         exception.printStackTrace();
+
+	    }
+	    finally {
+	         session.close();
+	    }
+
+	    isAlreadyExists =(results.isEmpty())?false:true;
+
+		return isAlreadyExists;
 	}
 
-	public Integer createGame(String gameName, int playerCount,
-							int gameStatus, Player[] players){
 
-		 session = factory.openSession();
+	public Integer createGame(String gameName,int playerCount, Player[] players){
+
+
+		  session = factory.openSession();
 	      Transaction transaction = null;
-	      Integer gameID = null;
+	      Integer newGameID = null;
+	      final byte GAME_STATUS = 0;
 
 	      try{
 
-	    	  transaction = session.beginTransaction();
-	         Game game = new Game(gameName, playerCount,
-	        		 gameStatus);
-	         gameID = (Integer) session.save(game);
-	         transaction.commit();
+	    	 transaction = session.beginTransaction();
 
-	         // insert players to gameplayer table
+	  		Game game = new Game(gameName, playerCount, GAME_STATUS);
+	        newGameID = (Integer) session.save(game);
 
+	        transaction.commit();
 
 
-	      }catch (HibernateException e) {
+
+	      }
+	      catch (HibernateException e) {
 	         if (transaction!=null) transaction.rollback();
 	         e.printStackTrace();
 
@@ -101,35 +131,59 @@ public class Database {
 	         session.close();
 	      }
 
-		return gameID;
+	      registerPlayersForGame(newGameID, players, playerCount);
+
+
+		return newGameID;
 
 
 	}
 
 
-	public Integer savePlayerScore(int gameID, int playerID, int score){
+	public int[] registerPlayersForGame(int newGameID, Player[] players, int playerCount){
 
 		session = factory.openSession();
-	      Transaction transaction = null;
-	      Integer gamePlayerID = null;
+	    Transaction transaction = null;
+	    int[] gamePlayerIDs = new int[playerCount-1];
+        final int INIT_SCORE = 0;
+        GamePlayer gamePlayer = null;
+
 
 	      try{
 
 	    	  transaction = session.beginTransaction();
-	         Player player = new Player(gameID, playerID,
-	        		 					score);
-	         gamePlayerID = (Integer) session.save(player);
-	         transaction.commit();
 
-	      }catch (HibernateException e) {
-	         if (transaction!=null) transaction.rollback();
-	         e.printStackTrace();
 
-	      }finally {
-	         session.close();
+	         for (int i = 0; i < playerCount; i++) {
+
+	        	 gamePlayer = new GamePlayer(newGameID,
+	        			 					 players[i].getPlayerID(), INIT_SCORE);
+		         gamePlayerIDs[i] = (Integer) session.save(gamePlayer);
+
+
+			}
+
+	        transaction.commit();
+	        gamePlayer.setGamePlayerIDs(gamePlayerIDs);
+
+	      }
+	      catch (HibernateException e) {
+
+	         if (transaction!=null){
+
+	        	 transaction.rollback();
+	        	 e.printStackTrace();
+	         }
+
 	      }
 
-		return gamePlayerID;
+	      finally{
+
+	    	  session.close();
+	      }
+
+	      return gamePlayerIDs;
+
 	}
 
 
@@ -139,13 +193,13 @@ public class Database {
 
 		  session = factory.openSession();
 	      Transaction transaction = null;
-	      Integer gamePlayerID = null;
+	      Integer highScoreID = null;
 
 	      try{
 
 	    	 transaction = session.beginTransaction();
-	         Player player = new Player(playerID, highScore);
-	         gamePlayerID = (Integer) session.save(player);
+	         HighScores highscore = new HighScores(playerID, highScore);
+	         highScoreID = (Integer) session.save(highscore);
 	         transaction.commit();
 
 	      }catch (HibernateException exception) {
@@ -159,147 +213,179 @@ public class Database {
 	         session.close();
 	      }
 
-		return gamePlayerID;
+		return highScoreID;
 
 	}
 
 
 	// load High Scores
 
-	public int[] loadHighScores(){
-
-		int[] highscore = new int[]{};
+	public List loadHighScores(){
 
 		Session session = factory.openSession();
-	    Transaction transaction = null;
+		Transaction transaction = null;
+		List highscoresRecords = null;
 
 	    try{
+	    	transaction = session.beginTransaction();
+	    	 sql ="SELECT p.player_username, hs.highscore FROM tbl_HighScores hs,"
+	    	 		+ " tbl_Player p WHERE hs.playerid = p.player_id ORDER BY hs.highscore DESC";
+	    	 SQLQuery query = session.createSQLQuery(sql);
 
-	         transaction = session.beginTransaction();
-	         results = session.createQuery("FROM tbl_HighScores").list();
+	    	 query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+	    	 highscoresRecords = query.list();
 
-	         System.out.println("High Scores " + results);
 
-	         transaction.commit();
+
 	    }
 	    catch (HibernateException exception) {
 
-	    	  if (transaction!=null) transaction.rollback();
-	         exception.printStackTrace();
+	    	if (transaction!=null){
 
+	        	 transaction.rollback();
+	        	 exception.printStackTrace();
+	         }
 	    }
 	    finally {
 	         session.close();
-	    }
-		return highscore;
+      }
+
+	    return highscoresRecords;
 	}
-
-
 
 	// update player score when saving a game
 
-	public void updatePlayerScore(int newScore){
+	public int updatePlayerScore(int gamePlayerID, int playerTotalScore){
 
 		 Session session = factory.openSession();
          Transaction transaction = null;
+         int result = 0;
 
 	      try{
 
-	         transaction = session.beginTransaction();
-	       //  Employee employee =
-	          //          (Employee)session.get(Employee.class, EmployeeID);
-	         //employee.setSalary( salary );
-			// session.update(employee);
-	         transaction.commit();
+	    	  	 transaction = session.beginTransaction();
+
+	    	  	 sql ="UPDATE tbl_GamePlayer SET player_score = "
+		    	 		+ ":newscore  WHERE gameplayer_id = :gameplayerid";
+
+		    	 SQLQuery query = session.createSQLQuery(sql);
+		    	 query.setParameter("newscore", playerTotalScore);
+		    	 query.setParameter("gameplayerid", gamePlayerID);
+
+		    	 result = query.executeUpdate();
+		    	 System.out.println(result);
+
+		    	 transaction.commit();
+
 	      }
+
 
 	      catch (HibernateException exception) {
 
 	    	if (transaction!=null) {
 	    		  transaction.rollback();
 	    	}
-	    	 exception.printStackTrace();
+
+	    	exception.printStackTrace();
 
 	      }
 	      finally {
 	         session.close();
 	      }
+
+	      return result;
 	}
 
 
-
-	public Game[] loadGames(){
+	public List loadGames(){
 
 		Game[] games = new Game[]{};
 		Session session = factory.openSession();
 	    Transaction transaction = null;
 
+
 	    try{
 
 	         transaction = session.beginTransaction();
-	         Query query = session.createQuery("FROM tbl_Game");
+
+	         // 0 = not finished games
+
+	         sql ="SELECT * FROM tbl_Game WHERE game_status = 0";
+
+	         SQLQuery query = session.createSQLQuery(sql);
+	         query.addEntity(Game.class);
 
 	         results = query.list();
-
-	         System.out.println(results);
-
 
 	         transaction.commit();
 
 	    }
-	    catch (HibernateException e) {
+	    catch (HibernateException exception) {
 
-	    	  if (transaction!=null) transaction.rollback();
-	         e.printStackTrace();
+	    	  if (transaction!=null){
+
+	    		  transaction.rollback();
+	    		  exception.printStackTrace();
+	    	  }
+
 
 	    }
 	    finally {
+
 	         session.close();
 	    }
 
-		return games;
+		return results;
 	}
 
 
-	// load active player data
+	// remove finished games
 
-	public List loadFreePlayers(){
+	public void removeGame(int gameID){
 
-/*
 		Session session = factory.openSession();
 	    Transaction transaction = null;
 
 	    try{
-
+	    	 Serializable id = new Integer(gameID);
 	         transaction = session.beginTransaction();
-	         hql = "FROM tbl_Player P WHERE P.player_status = :p_status";
-	         Query query = session.createQuery(hql);
-	         query.setParameter("p_status", 1);
-	         results = query.list();
 
-	         System.out.println(results);
+	         Object persistentInstance = session.load(Game.class, id);
 
+	         if (persistentInstance != null) {
+
+	             session.delete(persistentInstance);
+	         }
+
+	         sql ="DELETE FROM tbl_GamePlayer WHERE gameid = :id";
+
+		      SQLQuery query = session.createSQLQuery(sql);
+		    	 				query.setParameter("id", gameID);
+
+    	      query.executeUpdate();
 
 	         transaction.commit();
 
 	    }
-	    catch (HibernateException e) {
+	      catch (HibernateException exception) {
 
-	    	  if (transaction!=null) transaction.rollback();
-	         e.printStackTrace();
+	    	  if (transaction!=null){
 
-	    }
-	    finally {
+	    		  transaction.rollback();
+	    		  exception.printStackTrace();
+	    	  }
+
+	      }
+	      finally {
 	         session.close();
-	    }
-*/
-	    return results;
+	      }
+
 	}
 
 
 	// load single player data
 
-	public Player loadPlayerData(int playerID) {
+	public Player loadPlayerData(String playerEmail, String playerPassword) {
 
 		Player player = new Player();
 
@@ -308,70 +394,50 @@ public class Database {
 
 	    try{
 
-	         transaction = session.beginTransaction();
-	         hql = "FROM tbl_Player P WHERE P.player_id = :p_id";
-	         Query query = session.createQuery(hql);
-	         query.setParameter("p_id", playerID);
-	         results = query.list();
+	    	transaction = session.beginTransaction();
+	    	sql = "SELECT * FROM tbl_Player WHERE player_email = :email ";
 
-	         System.out.println(results);
+            SQLQuery query = session.createSQLQuery(sql);
+            query.setParameter("email", playerEmail);
+            query.addEntity(Player.class);
 
+            results = query.list();
 
-	         transaction.commit();
+            for (Iterator iterator = results.iterator(); iterator.hasNext();){
 
-	    }
-	    catch (HibernateException e) {
+	            player = (Player) iterator.next();
 
-	    	  if (transaction!=null) transaction.rollback();
-	         e.printStackTrace();
+	            try {
+					player.setLoginValid(PasswordHash.check(playerPassword,
+							player.getPlayerPassword()));
 
-	    }
-	    finally {
-	         session.close();
-	    }
+				} catch (Exception exception) {
 
-		return player;
-	}
+					exception.printStackTrace();
+				}
 
-
-
-	public boolean loadPlayerData(String userName, String password) {
-
-		boolean isPresent = false;
-
-		Session session = factory.openSession();
-	    Transaction transaction = null;
-
-	    try{
-
-	         transaction = session.beginTransaction();
-	         hql = "FROM tbl_Player P WHERE P.player_username = :p_username "
-	         		+ "AND P.player_password =: p_password";
-	         Query query = session.createQuery(hql);
-
-	         query.setParameter("p_id", userName);
-	         query.setParameter("p_password", password);
-	         results = query.list();
-	         isPresent = results.isEmpty()? false: true;
-
-	         System.out.println(results);
-
+	         }
 
 	         transaction.commit();
 
 	    }
-	    catch (HibernateException e) {
+	    catch (HibernateException exception) {
 
-	    	  if (transaction!=null) transaction.rollback();
-	         e.printStackTrace();
+	    	if (transaction!=null){
+
+	    		transaction.rollback();
+    	        exception.printStackTrace();
+	    	}
 
 	    }
 	    finally {
-	         session.close();
+
+	    	session.close();
 	    }
 
-		return isPresent;
+	    return player;
 	}
+
 
 
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+ "-//Hibernate/Hibernate Mapping DTD//EN"
+ "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+ <class name="gamesplayers.GamePlayer" table="tbl_GamePlayer">
+      <meta attribute="class-description">
+         This class contains the game player detail.
+      </meta>
+      <id name="gamePlayerID" type="int" column="gameplayer_id">
+         <generator class="increment"/>
+      </id>
+
+      <property name="gameID" column="gameid" type="int" not-null="true"/>
+
+      <property name="playerID" column="playerid" type="int" not-null="true"/>
+
+      <property name="playerScore" column="player_score"
+      				type="int" not-null="true"/>
+
+   </class>
+
+</hibernate-mapping>

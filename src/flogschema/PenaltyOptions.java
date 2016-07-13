@@ -6,7 +6,7 @@ public enum PenaltyOptions {
 	LOW_DAMAGE(0.5),
 	MEDIUM_DAMAGE(0.7),
 	HIGH_DAMAGE(0.9);
-	
+
 	private final double DAMAGE;
 
 	private PenaltyOptions(double damage) {
@@ -16,7 +16,7 @@ public enum PenaltyOptions {
 	public double getDAMAGE() {
 		return DAMAGE;
 	}
-	
-	
-	
+
+
+
 }

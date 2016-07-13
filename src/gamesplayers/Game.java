@@ -1,13 +1,17 @@
 package gamesplayers;
 
+
 import dataaccess.Database;
+
 
 public class Game {
 
-	protected static int gameID;
+	protected int gameID;
 	protected static String gameName;
-	protected static int gameStatus;
 	protected static int playerCount;
+	protected static int gameStatus;
+
+
 	protected static Player[] players;
 	protected static int gameRoundNo;
 	protected Database database;
@@ -15,6 +19,16 @@ public class Game {
 
 	public Game(){
 
+	}
+
+
+	public Player[] getPlayers() {
+		return players;
+	}
+
+
+	public static void setPlayers(Player[] players) {
+		Game.players = players;
 	}
 
 
@@ -61,7 +75,7 @@ public class Game {
 	}
 
 	public void setGameID(int gameID) {
-		Game.gameID = gameID;
+		this.gameID = gameID;
 	}
 
 	public void createNewGame(String gameName, int playerCount, int gameStatus, Player[] players){
@@ -69,7 +83,7 @@ public class Game {
 		setGameName(gameName);
 		setPlayerCount(playerCount);
 		setGameStatus(gameStatus);
-		database.createGame(gameName, playerCount, gameStatus, players);
+
 
 
 	}

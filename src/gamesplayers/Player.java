@@ -2,8 +2,10 @@ package gamesplayers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import dataaccess.Database;
+
 
 public class Player extends Game {
 
@@ -11,13 +13,25 @@ public class Player extends Game {
 	protected String playerUserName;
 	private String playerPassword;
 	private String playerEmail;
+	private boolean loginValid;
+	private int playerScore;
 	private int playerRoundScore;
 	private int playerTotalScore;
-	private int playerStatus;
-	private int highScore;
 
-	private static List<Player> onlinePlayersNotPlaying
+	private int playerStatus;
+
+
+	protected static List<Player> onlinePlayersNotPlaying
 						= new ArrayList<Player>();
+
+	/* represents players who are online
+	 * and currently playing a game
+	*/
+
+	protected static List<Player> onlinePlayersPlaying
+						= new ArrayList<Player>();
+
+
 
 	public String getPlayerUserName() {
 		return playerUserName;
@@ -29,14 +43,7 @@ public class Player extends Game {
 	}
 
 
-	public int getPlayerRoundScore() {
-		return playerRoundScore;
-	}
 
-
-	public void setPlayerRoundScore(int playerRoundScore) {
-		this.playerRoundScore = playerRoundScore;
-	}
 
 
 	public static List<Player> getOnlinePlayersNotPlaying() {
@@ -48,12 +55,6 @@ public class Player extends Game {
 		Player.onlinePlayersNotPlaying = onlinePlayersNotPlaying;
 	}
 
-
-	/* represents players who are online
-	 * and currently playing a game
-	*/
-	private static List<Player> onlinePlayersPlaying
-						= new ArrayList<Player>();
 
 
 	public Player(){
@@ -72,32 +73,39 @@ public class Player extends Game {
 
 		super();
 
-		Game.gameID = gameID;
+		//Game.gameID = gameID;
 		this.playerID = playerID;
-		this.playerRoundScore = playerScore;
 		this.playerStatus = playerStatus;
 	}
 
 
 	public Player(int gameID, int playerID, int score) {
-		Game.gameID = gameID;
+		//Game.gameID = gameID;
 		this.playerID = playerID;
-		this.playerRoundScore = score;
 	}
 
 	public Player(String gameName, String playerName, int playerScore) {
-		Game.gameName = gameName;
+
 		this.playerUserName = playerName;
-		this.playerRoundScore = playerScore;
 	}
 
 
+	public Player(int playerID, String playerName, String email, String password) {
 
-	public Player(int playerID, int highScore) {
 		this.playerID = playerID;
-		this.setHighScore(highScore);
+		this.playerUserName = playerName;
+		this.playerEmail = email;
+		this.playerPassword = password;
 	}
 
+
+	public Player(int playerID) {
+		this.playerID = playerID;
+
+	}
+
+
+	// registration constructor
 
 	public Player(String playerName, String playerEmail, String playerPassword) {
 
@@ -161,15 +169,7 @@ public class Player extends Game {
 	}
 
 
-	public int getPlayerScore() {
-		return playerRoundScore;
-	}
 
-
-
-	public void setPlayerScore(int playerScore) {
-		this.playerRoundScore = playerScore;
-	}
 
 
 	// update players who are playing
@@ -213,30 +213,22 @@ public class Player extends Game {
 	}
 
 
-	public boolean playerLogin(String userName, String password){
+	public void playerLogin(String userName, String password){
 
 		database = new Database();
 
-		return database.loadPlayerData(userName, password);
+
 
 	}
 
 
 
 
-	public int getPlayerTotalScore() {
-		return playerTotalScore;
-	}
-
-
-	public void setPlayerTotalScore(int playerTotalScore) {
-		this.playerTotalScore = playerTotalScore;
-	}
 
 
 	public void playerRequestToSave(){
 
-		// TODO: requesting to quit
+		// TODO: requesting to save
 
 		playerSendSaveRequests();
 	}
@@ -248,7 +240,7 @@ public class Player extends Game {
 
 	public void playerRespondSaveRequest(){
 
-		// TODO:
+		// TODO: responding to player requests
 
 	}
 
@@ -268,14 +260,46 @@ public class Player extends Game {
 	}
 
 
-	public int getHighScore() {
-		return highScore;
+	public boolean isLoginValid() {
+		return loginValid;
 	}
 
 
-	public void setHighScore(int highScore) {
-		this.highScore = highScore;
+	public void setLoginValid(boolean loginValid) {
+		this.loginValid = loginValid;
 	}
+
+
+	public int getPlayerScore() {
+		return playerScore;
+	}
+
+
+	public void setPlayerScore(int playerScore) {
+		this.playerScore = playerScore;
+	}
+
+
+	public int getPlayerRoundScore() {
+		return playerRoundScore;
+	}
+
+
+	public void setPlayerRoundScore(int playerRoundScore) {
+		this.playerRoundScore = playerRoundScore;
+	}
+
+
+	public int getPlayerTotalScore() {
+		return playerTotalScore;
+	}
+
+
+	public void setPlayerTotalScore(int playerTotalScore) {
+		this.playerTotalScore = playerTotalScore;
+	}
+
+
 
 
 }

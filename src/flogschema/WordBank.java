@@ -1,16 +1,12 @@
 package flogschema;
 
-import triedictionary.WordTrie;
 
 public class WordBank extends LetterBag {
 
 	private char[] word;
-	private WordTrie wordTrie;
 
 	public WordBank() {
 
-		super();
-		wordTrie = new WordTrie();
 	}
 
 

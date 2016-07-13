@@ -14,7 +14,8 @@ public class PasswordHash {
 	// The higher the number of iterations the more
     // expensive computing the hash is for us and
     // also for an attacker.
-    private static final int ITERATIONS = 20*1000;
+
+	private static final int ITERATIONS = 20*1000;
     private static final int SALT_LENGTH = 32;
     private static final int DESIRED_KEY_LENGTH = 256;
 
@@ -28,9 +29,9 @@ public class PasswordHash {
     	byte[] salt = new byte[]{};
 		try {
 			salt = SecureRandom.getInstance("SHA1PRNG").generateSeed(SALT_LENGTH);
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (NoSuchAlgorithmException exception) {
+
+			exception.printStackTrace();
 		}
         // store the salt with the password
         return Base64.encodeBase64String(salt) + "$" + hash(password, salt);
