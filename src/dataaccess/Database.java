@@ -39,28 +39,36 @@ public class Database {
 	}
 
 
-	public Integer createPlayer(Player player){
+	public boolean createPlayer(Player player){
 
 		 session = factory.openSession();
 	      Transaction transaction = null;
 	      Integer playerID = null;
+	      boolean exists = false;
 
-	      try{
+	      exists = isEmailAreadyExists(player.getPlayerEmail());
 
-			player.setPlayerPassword(PasswordHash.getSaltedHash(player.getPlayerPassword()));
-	    	transaction = session.beginTransaction();
-	        playerID = (Integer) session.save(player);
-	        transaction.commit();
+	      if(!exists){
 
-	      }catch (HibernateException e) {
-	         if (transaction!=null) transaction.rollback();
-	         e.printStackTrace();
+		      try{
 
-	      }finally {
-	         session.close();
+				player.setPlayerPassword(PasswordHash.getSaltedHash(player.getPlayerPassword()));
+		    	transaction = session.beginTransaction();
+		        playerID = (Integer) session.save(player);
+		        transaction.commit();
+
+		      }
+		      catch (HibernateException e) {
+		         if (transaction!=null)
+		        	 transaction.rollback();
+		         	 e.printStackTrace();
+
+		      }finally {
+		         session.close();
+		      }
 	      }
 
-		return playerID;
+		return exists;
 	}
 
 
@@ -388,7 +396,7 @@ public class Database {
 	public Player loadPlayerData(String playerEmail, String playerPassword) {
 
 		Player player = new Player();
-
+		System.out.println("method");
 		Session session = factory.openSession();
 	    Transaction transaction = null;
 
@@ -408,8 +416,10 @@ public class Database {
 	            player = (Player) iterator.next();
 
 	            try {
+
 					player.setLoginValid(PasswordHash.check(playerPassword,
 							player.getPlayerPassword()));
+
 
 				} catch (Exception exception) {
 
@@ -434,6 +444,7 @@ public class Database {
 
 	    	session.close();
 	    }
+
 
 	    return player;
 	}

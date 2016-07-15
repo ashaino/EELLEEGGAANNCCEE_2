@@ -1,24 +1,24 @@
 package networking;
 
+import java.io.IOException;
+
 public class RunServer {
-	
+
+	private static final int PORT_NO = 6066;
+
 	public static void main(String[] args) {
-		
-		
-		// testing code
-		
-		Server server = new Server(9000);
-		new Thread(server).start();
+		// TODO Auto-generated method stub
 
-		try {
-			Thread.sleep(100000);
-			
-		} catch (InterruptedException exception) {    
-			exception.printStackTrace();
-		}
-		
-		System.out.println("Stopping Server");
-		server.stop();
-
+		  try
+	      {
+	         Thread serverThread = new ThreadedServer(PORT_NO);
+	         serverThread.setName("Server Thread");
+	         serverThread.start();
+	      }
+	      catch(IOException e)
+	      {
+	         e.printStackTrace();
+	      }
 	}
+
 }

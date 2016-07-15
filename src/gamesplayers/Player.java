@@ -11,13 +11,13 @@ public class Player extends Game {
 
 	protected int playerID;
 	protected String playerUserName;
+	private String playerIP;
 	private String playerPassword;
 	private String playerEmail;
 	private boolean loginValid;
 	private int playerScore;
 	private int playerRoundScore;
 	private int playerTotalScore;
-
 	private int playerStatus;
 
 
@@ -133,14 +133,27 @@ public class Player extends Game {
 	}
 
 
-	public boolean playerAuthentication(){
+	public Player playerLogin(String email, String password){
 
-		boolean authSuccess = false;
+		Player playerLogin = new Player();
 
 		// use dbaccess to validate playerName, Password
 
-		return authSuccess;
+		database = new Database();
+		playerLogin = database.loadPlayerData(email, password);
+
+
+		return playerLogin;
+
 	}
+
+	public void addPlayerToNotPlayingList(Player player){
+
+		onlinePlayersNotPlaying.add(player);
+
+	}
+
+
 
 	public String getPlayerEmail() {
 		return playerEmail;
@@ -158,21 +171,34 @@ public class Player extends Game {
 		this.playerID = playerID;
 	}
 
-	public void registerPlayer(){
+	public boolean registerPlayer(String userName, String email, String password){
 
+		database = new Database();
+		Player player = new Player(userName, email,password);
+		database.createPlayer(player);
 
+		return true;
 	}
 
-	public void getPlayerDetails(){
+	// remove offline players from the list
 
+	public List<Player> removePlayerNotPlaying(int playerID){
 
+		for (Player player: onlinePlayersNotPlaying) {
+
+			if(player.playerID == playerID){
+
+				player.playerStatus = 1;
+				onlinePlayersNotPlaying.remove(player);
+				break;
+			}
+		}
+		return onlinePlayersPlaying;
 	}
 
 
 
-
-
-	// update players who are playing
+	// update existing players on the not playing list who are playing
 
 	public List<Player> updatePlayerPlaying(int playerID){
 
@@ -190,7 +216,7 @@ public class Player extends Game {
 	}
 
 
-	/* update players who are not playing
+	/* update players on the  playing list who are not playing
 	 * 0 disconnected
 	 * 1 connected & free
 	 * 2 engaged
@@ -213,30 +239,22 @@ public class Player extends Game {
 	}
 
 
-	public void playerLogin(String userName, String password){
-
-		database = new Database();
 
 
 
+
+
+	public void playerRequestToSave(int gameID){
+
+		// requesting to save
+		// sending save request to other members
+
+			for (Player player : onlinePlayersPlaying) {
+
+			}
 	}
 
 
-
-
-
-
-	public void playerRequestToSave(){
-
-		// TODO: requesting to save
-
-		playerSendSaveRequests();
-	}
-
-	public void playerSendSaveRequests(){
-
-		// TODO: sending save request to other members
-	}
 
 	public void playerRespondSaveRequest(){
 
@@ -297,6 +315,16 @@ public class Player extends Game {
 
 	public void setPlayerTotalScore(int playerTotalScore) {
 		this.playerTotalScore = playerTotalScore;
+	}
+
+
+	public String getPlayerIP() {
+		return playerIP;
+	}
+
+
+	public void setPlayerIP(String playerIP) {
+		this.playerIP = playerIP;
 	}
 
 

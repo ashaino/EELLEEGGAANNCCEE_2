@@ -1,13 +1,18 @@
-package gamesplayers;
+package networking;
+
+import dataaccess.Database;
+
+public class RunClient {
 
 
-import dataaccess.FileAccess;
-
-public class Play {
 
 	public static void main(String[] args) {
 
-		//Database db = new Database();
+		//Client.clientTimer();
+		Client.login("kaushalya815@gmail.com", "password");
+		//Client.signUp("Gayan", "gayan@gmail.com","pass");
+
+		Database db = new Database();
 		// testing code
 		/*
 		Player player = new Player(null, null);
@@ -50,18 +55,19 @@ public class Play {
 		p[1] = p2;
 		p[2] = p3;
 		p[3] = p4;
+*/
 
+//		System.out.println("Create Player: "+db.createPlayer(new Player("Gayan","gayan@gmail.com","pass")));
 
-		//System.out.println("Create Player: "+db.createPlayer(new Player("Kaushalya","kaushalya815@gmail.com","password")));
+//		Game.setPlayers(p);
 
-		Game.setPlayers(p);
-
-		int playerCount = 4;*/
+	//	int playerCount = 4;
 	//	System.out.println("Create Game "+db.createGame("Hi game", playerCount,p));
 		//System.out.println(" "+db.registerPlayersForGame(1, p, 4));
 
 
-		//System.out.println("Load Player Data "+db.loadPlayerData("Kaushalya", ""));
+		//System.out.println("Load Player Data "+db.loadPlayerData("kaushalya815@gmail.com", "password").playerUserName);
+
 		//System.out.println("HighScores "+db.saveHighScores(1, 50000));
 
 		/*List data = db.loadHighScores();
@@ -108,6 +114,7 @@ public class Play {
 		//fileaccess.loadTrophyCabinet();
 		//fileaccess.unlockTrophy(2);
 		//fileaccess.loadTrophyCabinet();
+
 
 	}
 
