@@ -1,9 +1,7 @@
 package gamesplayers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
+import java.util.List;
 import dataaccess.Database;
 
 
@@ -19,19 +17,26 @@ public class Player extends Game {
 	private int playerRoundScore;
 	private int playerTotalScore;
 	private int playerStatus;
+	private boolean saveApproved;
+	private int roundNo;
+	private int gamePlayerID;
 
 
-	protected static List<Player> onlinePlayersNotPlaying
-						= new ArrayList<Player>();
-
-	/* represents players who are online
-	 * and currently playing a game
-	*/
-
-	protected static List<Player> onlinePlayersPlaying
-						= new ArrayList<Player>();
 
 
+
+	public String sendFreePlayerList(){
+
+		String playerList = "";
+
+		for (Player player: Game.onlinePlayersPlaying) {
+
+			playerList+=player.getPlayerID()+";"+player.getPlayerName()+";";
+		}
+
+		playerList ="samplelist";
+		return playerList;
+	}
 
 	public String getPlayerUserName() {
 		return playerUserName;
@@ -43,17 +48,12 @@ public class Player extends Game {
 	}
 
 
+	public void updatePlayerScore(int score) {
 
-
-
-	public static List<Player> getOnlinePlayersNotPlaying() {
-		return onlinePlayersNotPlaying;
+		// find efficient data structure
 	}
 
 
-	public static void setOnlinePlayersNotPlaying(List<Player> onlinePlayersNotPlaying) {
-		Player.onlinePlayersNotPlaying = onlinePlayersNotPlaying;
-	}
 
 
 
@@ -149,7 +149,7 @@ public class Player extends Game {
 
 	public void addPlayerToNotPlayingList(Player player){
 
-		onlinePlayersNotPlaying.add(player);
+		Game.onlinePlayersNotPlaying.add(player);
 
 	}
 
@@ -184,7 +184,7 @@ public class Player extends Game {
 
 	public List<Player> removePlayerNotPlaying(int playerID){
 
-		for (Player player: onlinePlayersNotPlaying) {
+		for (Player player: Game.onlinePlayersNotPlaying) {
 
 			if(player.playerID == playerID){
 
@@ -200,9 +200,9 @@ public class Player extends Game {
 
 	// update existing players on the not playing list who are playing
 
-	public List<Player> updatePlayerPlaying(int playerID){
+	public static List<Player> updatePlayerPlaying(int playerID){
 
-		for (Player player: onlinePlayersNotPlaying) {
+		for (Player player: Game.onlinePlayersNotPlaying) {
 
 			if(player.playerID == playerID){
 
@@ -223,9 +223,9 @@ public class Player extends Game {
 	*/
 
 
-	public List<Player> updatePlayerNotPlaying(int playerID){
+	public static List<Player> updatePlayerNotPlaying(int playerID){
 
-		for (Player player: onlinePlayersPlaying) {
+		for (Player player: Game.onlinePlayersPlaying) {
 
 			if(player.playerID == playerID){
 
@@ -241,17 +241,24 @@ public class Player extends Game {
 
 
 
+	public void updateSaveResponse(String saveResponse){
+
+		// update save response variable
+
+	}
 
 
+	public boolean requestToSave(int gameID){
 
-	public void playerRequestToSave(int gameID){
-
+		boolean requestApproved = false;
 		// requesting to save
 		// sending save request to other members
 
 			for (Player player : onlinePlayersPlaying) {
 
 			}
+
+		return requestApproved;
 	}
 
 
@@ -263,6 +270,12 @@ public class Player extends Game {
 	}
 
 	public void seeHighScores(){
+
+
+	}
+
+	public void invitePlayers(int gameid, int[] players){
+
 
 
 	}
@@ -325,6 +338,30 @@ public class Player extends Game {
 
 	public void setPlayerIP(String playerIP) {
 		this.playerIP = playerIP;
+	}
+
+	public boolean isSaveApproved() {
+		return saveApproved;
+	}
+
+	public void setSaveApproved(boolean saveApproved) {
+		this.saveApproved = saveApproved;
+	}
+
+	public int getRoundNo() {
+		return roundNo;
+	}
+
+	public void setRoundNo(int roundNo) {
+		this.roundNo = roundNo;
+	}
+
+	public int getGamePlayerID() {
+		return gamePlayerID;
+	}
+
+	public void setGamePlayerID(int gamePlayerID) {
+		this.gamePlayerID = gamePlayerID;
 	}
 
 

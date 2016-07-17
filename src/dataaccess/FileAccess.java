@@ -20,6 +20,7 @@ import org.w3c.dom.NodeList;
 
 import gamesplayers.Player;
 import gamesplayers.TrophyCabinet;
+import security.FileEncryptDecrypt;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
@@ -116,13 +117,6 @@ public class FileAccess {
 
 	}
 
-	public void modifyUserData(){
-
-		 // TODO: decrypt
-
-
-		 // TODO: encrypt
-	}
 
 	public String getUserData(){
 

@@ -14,19 +14,25 @@ import dataaccess.FileAccess;
 
 public class Client extends TimerTask {
 
-	// Message IDs
 	private static final String TAG_LOGIN = "LI";
 	private static final String TAG_SIGNUP = "SU";
 	private static final String TAG_SAVE = "SV";
 	private static final String TAG_LEAVE = "LV";
-	private static final String TAG_JOIN = "JN";
-	private static final String TAG_CREATE_GAME = "CG";
+	private static final String TAG_CREATE_GAME_START = "CGS";
+	private static final String TAG_CREATE_GAME_START_RESPONSE = "CGSR";
+	private static final String TAG_CREATE_GAME_REQUEST = "CGR";
 	private static final String TAG_HIGHSCORE = "HS";
-	private static final String TAG_SCORE = "HS";
+	private static final String TAG_SCORE = "SC";
+	private static final String TAG_REQUEST_JOIN = "RJ";
 	private static final String TAG_SAVE_RESPOND = "SR";
+	private static final String TAG_PLAYER_LIST = "PL";
+	private static final String TAG_NEW_GAME_INVITE = "NGI";
+	private static final String TAG_NEW_GAME_INVITE_RESPONSE = "NGIR";
+	private static final String TAG_SAVE_RESPONSE_SERVER = "SRS";
 
     private static final String SEVER_NAME = "localhost";
     private static final int PORT = 6066;
+    private static int score = 6066;
     private static OutputStream outToServer;
     private static DataOutputStream out;
     private static InputStream inFromServer;
@@ -48,11 +54,9 @@ public class Client extends TimerTask {
 	public void run() {
 
     	System.out.println("sending status");
-    	//sendScore(score);
+    	sendScore(score);
 
 	}
-
-
 
 
 	public static void connect(){
@@ -75,7 +79,6 @@ public class Client extends TimerTask {
 
 
 	}
-
 
 	public static void login(String email, String password){
 
@@ -112,7 +115,6 @@ public class Client extends TimerTask {
 
 	}
 
-
 	public static String signUp(String userName, String email, String password){
 
 		connect();
@@ -140,11 +142,10 @@ public class Client extends TimerTask {
 		return signUpValid;
 	}
 
-
-	public static String sendScore(int score){
+	public static void sendScore(int score){
 
 		connect();
-		String scoreRecieved = "";
+
 
 		try {
 
@@ -154,10 +155,10 @@ public class Client extends TimerTask {
 
         	out.writeUTF(TAG_SCORE+";"+score);
 
-        	inFromServer = clientSocket.getInputStream();
-			in = new DataInputStream(inFromServer);
+        	//inFromServer = clientSocket.getInputStream();
+			//in = new DataInputStream(inFromServer);
 
-			scoreRecieved = in.readUTF();
+			//scoreRecieved = in.readUTF();
 
 		}
 		catch (IOException e) {
@@ -165,17 +166,12 @@ public class Client extends TimerTask {
 			e.printStackTrace();
 		}
 
-		return scoreRecieved;
 	}
 
-
-
-
-
-	public static String createGame(){
+	public static void requestCreateGame(){
 
 		connect();
-		String scoreRecieved = "";
+		String playerList = "";
 
 		try {
 
@@ -183,12 +179,12 @@ public class Client extends TimerTask {
 
 			out = new DataOutputStream(outToServer);
 
-        	out.writeUTF(TAG_CREATE_GAME+";");
+        	out.writeUTF(TAG_CREATE_GAME_REQUEST+";");
 
         	inFromServer = clientSocket.getInputStream();
 			in = new DataInputStream(inFromServer);
 
-			scoreRecieved = in.readUTF();
+			playerList = in.readUTF();
 
 		}
 		catch (IOException e) {
@@ -196,14 +192,14 @@ public class Client extends TimerTask {
 			e.printStackTrace();
 		}
 
-		return scoreRecieved;
+		System.out.println(playerList);
+
+
 	}
 
-
-	public static String joinGame(){
+	public static void sendSelectedPlayerList(String selectedlayerList){
 
 		connect();
-		String scoreRecieved = "";
 
 		try {
 
@@ -211,12 +207,12 @@ public class Client extends TimerTask {
 
 			out = new DataOutputStream(outToServer);
 
-        	out.writeUTF(TAG_JOIN+";");
+        	out.writeUTF(TAG_CREATE_GAME_START+";"+selectedlayerList);
 
-        	inFromServer = clientSocket.getInputStream();
-			in = new DataInputStream(inFromServer);
+        	//inFromServer = clientSocket.getInputStream();
+			//in = new DataInputStream(inFromServer);
 
-			scoreRecieved = in.readUTF();
+			//gameApproved = in.readUTF();
 
 		}
 		catch (IOException e) {
@@ -224,14 +220,66 @@ public class Client extends TimerTask {
 			e.printStackTrace();
 		}
 
-		return scoreRecieved;
+
 	}
 
+	public static void respondGameInvite(boolean response){
+
+		connect();
+		//String gameApproved = "";
+
+		try {
+
+			outToServer = clientSocket.getOutputStream();
+
+			out = new DataOutputStream(outToServer);
+
+        	out.writeUTF(TAG_NEW_GAME_INVITE_RESPONSE+";"+response);
+
+        	//inFromServer = clientSocket.getInputStream();
+			//in = new DataInputStream(inFromServer);
+
+			//gameApproved = in.readUTF();
+
+		}
+		catch (IOException e) {
+
+			e.printStackTrace();
+		}
+
+	}
+
+	public static String requestJoinGameList(){
+
+		connect();
+		String joinGameResponse = "";
+
+		try {
+
+			outToServer = clientSocket.getOutputStream();
+
+			out = new DataOutputStream(outToServer);
+
+        	out.writeUTF(TAG_REQUEST_JOIN+";");
+
+        	inFromServer = clientSocket.getInputStream();
+			in = new DataInputStream(inFromServer);
+
+			joinGameResponse = in.readUTF();
+
+		}
+		catch (IOException e) {
+
+			e.printStackTrace();
+		}
+
+		return joinGameResponse;
+	}
 
 	public static String getHighScores(){
 
 		connect();
-		String scoreRecieved = "";
+		String highScoresRecieved = "";
 
 		try {
 
@@ -244,7 +292,7 @@ public class Client extends TimerTask {
         	inFromServer = clientSocket.getInputStream();
 			in = new DataInputStream(inFromServer);
 
-			scoreRecieved = in.readUTF();
+			highScoresRecieved = in.readUTF();
 
 		}
 		catch (IOException e) {
@@ -252,7 +300,7 @@ public class Client extends TimerTask {
 			e.printStackTrace();
 		}
 
-		return scoreRecieved;
+		return highScoresRecieved;
 	}
 
 	public static String requestSave(){
@@ -282,11 +330,10 @@ public class Client extends TimerTask {
 		return saveResult;
 	}
 
-
-	public static String respondForSaveRequest(String response){
+	public static void respondForSaveRequest(String response){
 
 		connect();
-		String saveResult = "";
+		//String saveResult = "";
 
 		try {
 
@@ -296,10 +343,10 @@ public class Client extends TimerTask {
 
         	out.writeUTF(TAG_SAVE_RESPOND+";"+response);
 
-        	inFromServer = clientSocket.getInputStream();
-			in = new DataInputStream(inFromServer);
+        	//inFromServer = clientSocket.getInputStream();
+			//in = new DataInputStream(inFromServer);
 
-			saveResult = in.readUTF();
+			//saveResult = in.readUTF();
 
 		}
 		catch (IOException e) {
@@ -307,13 +354,13 @@ public class Client extends TimerTask {
 			e.printStackTrace();
 		}
 
-		return saveResult;
+		//return saveResult;
 	}
 
-	public static String leaveGame(int score){
+	public static void leaveGame(){
 
 		connect();
-		String leaveResult = "";
+		//		String leaveResult = "";
 
 		try {
 
@@ -323,10 +370,10 @@ public class Client extends TimerTask {
 
         	out.writeUTF(TAG_LEAVE+";");
 
-        	inFromServer = clientSocket.getInputStream();
-			in = new DataInputStream(inFromServer);
+        //	inFromServer = clientSocket.getInputStream();
+			//in = new DataInputStream(inFromServer);
 
-			leaveResult = in.readUTF();
+			//leaveResult = in.readUTF();
 
 		}
 		catch (IOException e) {
@@ -334,12 +381,9 @@ public class Client extends TimerTask {
 			e.printStackTrace();
 		}
 
-		return leaveResult;
+
 	}
 
 
-	public static String getTagSaveRespond() {
-		return TAG_SAVE_RESPOND;
-	}
 
 }

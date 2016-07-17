@@ -20,6 +20,9 @@
       <property name="playerScore" column="player_score"
       				type="int" not-null="true"/>
 
+      <property name="gameRoundNo" column="round"
+      				type="int" not-null="true"/>
+
    </class>
 
 </hibernate-mapping>

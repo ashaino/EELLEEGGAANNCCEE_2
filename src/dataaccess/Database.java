@@ -18,6 +18,7 @@ import gamesplayers.Game;
 import gamesplayers.GamePlayer;
 import gamesplayers.HighScores;
 import gamesplayers.Player;
+import security.PasswordHash;
 
 
 public class Database {
@@ -36,6 +37,53 @@ public class Database {
 	        		 	+ exception);
 	         throw new ExceptionInInitializerError(exception);
 	      }
+	}
+
+	public void saveGame(int playerCount, Player[] players){
+
+		 Session session = factory.openSession();
+         Transaction transaction = null;
+         int result = 0;
+
+	      try{
+
+	    	  for (int i = 0; i < playerCount; i++) {
+
+	    		 	 transaction = session.beginTransaction();
+
+		    	  	 sql ="UPDATE tbl_GamePlayer SET player_score = "
+			    	 		+ ":newscore AND player_round = :round WHERE gameplayer_id = :gameplayerid";
+
+			    	 SQLQuery query = session.createSQLQuery(sql);
+			    	 query.setParameter("newscore", players[i].getPlayerTotalScore());
+			    	 query.setParameter("round",players[i].getRoundNo() );
+			    	 query.setParameter("gameplayerid", players[i].getGamePlayerID());
+
+			    	 result = query.executeUpdate();
+			    	 System.out.println(result);
+			}
+
+
+		    	 transaction.commit();
+
+	      }
+
+
+	      catch (HibernateException exception) {
+
+	    	if (transaction!=null) {
+	    		  transaction.rollback();
+	    	}
+
+	    	exception.printStackTrace();
+
+	      }
+	      finally {
+	         session.close();
+	      }
+
+
+
 	}
 
 
@@ -172,7 +220,6 @@ public class Database {
 			}
 
 	        transaction.commit();
-	        gamePlayer.setGamePlayerIDs(gamePlayerIDs);
 
 	      }
 	      catch (HibernateException e) {
@@ -345,6 +392,88 @@ public class Database {
 
 		return results;
 	}
+
+
+
+	public boolean checkAlreadyMember(int gameID, int playerID){
+
+		Session session = factory.openSession();
+	    Transaction transaction = null;
+	    boolean isMember = false;
+
+	    try{
+
+	         transaction = session.beginTransaction();
+
+	         // 0 = not finished games
+
+	         sql ="SELECT gameplayer_id FROM tbl_GamePlayer WHERE game_id = :gid AND player_id = :pid";
+
+	         SQLQuery query = session.createSQLQuery(sql);
+	         query.setParameter("gid", gameID);
+	         query.setParameter("pid", playerID);
+
+	         results = query.list();
+
+	         transaction.commit();
+
+	    }
+	    catch (HibernateException exception) {
+
+	    	  if (transaction!=null){
+
+	    		  transaction.rollback();
+	    		  exception.printStackTrace();
+	    	  }
+	    }
+	    finally {
+
+	         session.close();
+	    }
+
+	    isMember = !results.isEmpty();
+
+		return isMember;
+	}
+
+	// remove leaved player from a game
+
+
+	public void removeLeavePlayer(int gameID, int playerID){
+
+		Session session = factory.openSession();
+	    Transaction transaction = null;
+
+	    try{
+	         transaction = session.beginTransaction();
+
+
+	         sql ="DELETE FROM tbl_GamePlayer WHERE gameid = :gid AND playerid = :pid";
+
+		      SQLQuery query = session.createSQLQuery(sql);
+		    	 				query.setParameter("gid", gameID);
+		    	 				query.setParameter("pid", playerID);
+
+    	      query.executeUpdate();
+
+	         transaction.commit();
+
+	    }
+	      catch (HibernateException exception) {
+
+	    	  if (transaction!=null){
+
+	    		  transaction.rollback();
+	    		  exception.printStackTrace();
+	    	  }
+
+	      }
+	      finally {
+	         session.close();
+	      }
+
+	}
+
 
 
 	// remove finished games

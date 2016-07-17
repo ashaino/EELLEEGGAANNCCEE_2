@@ -8,11 +8,12 @@ public class RunClient {
 
 	public static void main(String[] args) {
 
-		//Client.clientTimer();
-		Client.login("kaushalya815@gmail.com", "password");
+		Client.clientTimer();
+		//Client.login("kaushalya815@gmail.com", "password");
+		Client.requestCreateGame();
 		//Client.signUp("Gayan", "gayan@gmail.com","pass");
 
-		Database db = new Database();
+		//Database db = new Database();
 		// testing code
 		/*
 		Player player = new Player(null, null);
@@ -100,7 +101,6 @@ public class RunClient {
 			System.out.println("login valid: "+db.loadPlayerData("kaushalya815@gmail.com", "password").isLoginValid());
 		}
 		catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

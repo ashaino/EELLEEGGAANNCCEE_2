@@ -2,6 +2,8 @@ package flogschema;
 
 import java.util.Random;
 
+import datastructures.WordBank;
+
 public class Scorer extends WordBank {
 
 	private static double roundScore = 0;

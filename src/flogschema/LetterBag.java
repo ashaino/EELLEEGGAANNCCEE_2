@@ -2,6 +2,8 @@ package flogschema;
 
 import java.util.Random;
 
+import datastructures.WordBank;
+
 public class LetterBag extends FlogGame{
 
 	private char[] tenLetters;
